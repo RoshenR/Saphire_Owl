@@ -57,6 +57,32 @@ app.get('/stats', (req, res) => {
     res.json(entries);
 });
 
+app.post('/event', (req, res) => {
+    const { userId, event } = req.body;
+
+    let allStats = [];
+
+    if (fs.existsSync(STATS_FILE)) {
+        const raw = fs.readFileSync(STATS_FILE, 'utf8');
+        if (raw.trim() !== "") {
+            allStats = JSON.parse(raw);
+        }
+    }
+
+    const index = allStats.findIndex(entry => entry.userId === userId);
+    if (index !== -1) {
+        if (event === "kill") {
+            allStats[index].kills += 1;
+        } else if (event === "death") {
+            allStats[index].deaths += 1;
+        }
+        fs.writeFileSync(STATS_FILE, JSON.stringify(allStats, null, 2));
+        res.status(200).send('OK');
+    } else {
+        res.status(404).send("User not found");
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
 });
