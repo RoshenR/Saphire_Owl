@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Stats joueurs</title></head>
+<body>
+<h1>Statistiques</h1>
+<ul id="stats"></ul>
+
+<script>
+    fetch('http://172.20.10.2:3000/stats')
+        .then(res => res.json())
+        .then(data => {
+            const ul = document.getElementById('stats');
+            data.forEach(stat => {
+                const li = document.createElement('li');
+                li.textContent = `${stat.username} : ${stat.kills} kills / ${stat.deaths} morts / ${Math.floor(stat.playtime)}s`;
+                ul.appendChild(li);
+            });
+        });
+</script>
+</body>
+</html>
